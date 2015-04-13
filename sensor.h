@@ -14,8 +14,8 @@ public:
     ~Sensor();
     Packet getDataPacket();
     Packet getInitPacket();
-    void dataReceived(Packet data);
-    void initReceived(Packet init);
+    void dataReceived(Packet *data);
+    void initReceived(Packet *init);
 
 private:
     int deviceID;

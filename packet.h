@@ -17,15 +17,18 @@ public:
     };
 
     Packet();
+    Packet(const Packet &packet);
     ~Packet();
+
+    Packet &operator= (const Packet &packet);
 
     QByteArray encode();
     bool decode(QByteArray *data);
 
-    int getPacketType();
-    int getDeviceID();
-    QList<QString>* getBriefData();
-    QList<double>* getNumericData();
+    int getPacketType() const;
+    int getDeviceID() const;
+    QList<QString>* getBriefData() const;
+    QList<double>* getNumericData() const;
 
     void setPacketID(int id);
     void setDeviceID(int id);

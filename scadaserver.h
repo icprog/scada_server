@@ -26,9 +26,10 @@ signals:
 private slots:
     void onNewDeviceConnected();
     void onDeviceDataRx();
+    void onDeviceDisconnected();
 
 private:
-    QList<DeviceConnection>* deviceList;
+    QList<DeviceConnection*>* deviceList;
     QTcpServer *server;
     QList<QTcpSocket*> *devicesConnected;
 

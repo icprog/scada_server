@@ -18,8 +18,8 @@ public:
 
     virtual Packet getInitPacket();
     virtual Packet getDataPacket();
-    virtual void initReceived(Packet init);
-    virtual void dataReceived(Packet data);
+    virtual void initReceived(Packet* init);
+    virtual void dataReceived(Packet* data);
     int getUUID();
 protected:
     QString name;

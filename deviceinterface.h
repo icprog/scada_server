@@ -5,13 +5,13 @@
 class DeviceConnection
 {
 public:
-    DeviceConnection(ScadaDevice *device, QTcpSocket* socket);
+    DeviceConnection(ScadaDevice *device, QTcpSocket *socket);
     ~DeviceConnection();
     QTcpSocket* getSocket();
     ScadaDevice* getDevice();
 private:
-    ScadaDevice* device;
-    QTcpSocket* socket;
+    ScadaDevice* dev;
+    QTcpSocket* soc;
     QList<double>* buffer;
 
 };

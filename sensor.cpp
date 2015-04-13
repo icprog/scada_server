@@ -1,8 +1,9 @@
 #include "sensor.h"
 
-Sensor::Sensor()
+Sensor::Sensor() : ScadaDevice()
 {
-
+    measurandName = "nodata";
+    measurandUnit = "nodata";
 }
 
 Sensor::~Sensor()
@@ -41,10 +42,10 @@ Packet Sensor::getInitPacket()
     packet.addNumericData(samplingPeriod);
 }
 
-void Sensor::dataReceived(Packet data)
+void Sensor::dataReceived(Packet *data)
 {
-    QList<QString>* brief = data.getBriefData();
-    QList<double>* numeric = data.getNumericData();
+    QList<QString>* brief = data->getBriefData();
+    QList<double>* numeric = data->getNumericData();
     if(!brief->isEmpty() && !numeric->isEmpty())
     {
         if(brief->at(0)=="meas_value")
@@ -53,10 +54,10 @@ void Sensor::dataReceived(Packet data)
 
 }
 
-void Sensor::initReceived(Packet init)
+void Sensor::initReceived(Packet *init)
 {
-    QList<QString>* brief = init.getBriefData();
-    QList<double>* numeric = init.getNumericData();
+    QList<QString>* brief = init->getBriefData();
+    QList<double>* numeric = init->getNumericData();
     if(brief->size() == 7 && numeric->size()==2)
     {
         name = brief->at(0);

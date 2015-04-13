@@ -6,12 +6,46 @@ Packet::Packet()
     numericData = new QList<double>;
 }
 
+Packet::Packet(const Packet &packet)
+{
+    briefData = new QList<QString>(*packet.getBriefData());
+    numericData = new QList<double>(*packet.getNumericData());
+    packetID = (PacketID_enum)packet.getPacketType();
+    deviceID = packet.getDeviceID();
+
+}
 
 Packet::~Packet()
 {
-    delete briefData;
-    delete numericData;
+    if(briefData!=NULL && numericData != NULL)
+    {
+        delete briefData;
+        delete numericData;
+        briefData = NULL;
+        numericData = NULL;
+    }
+
 }
+
+Packet &Packet::operator= (const Packet &packet)
+{
+    if(this != &packet)
+    {
+        QList<QString> *briefDataN = new QList<QString>(*packet.getBriefData());
+       QList<double> *numericDataN = new QList<double>(*packet.getNumericData());
+        packetID = (PacketID_enum)packet.getPacketType();
+        deviceID = packet.getDeviceID();
+
+        delete briefData;
+        delete numericData;
+        briefData = briefDataN;
+        numericData = numericDataN;
+    }
+    return *this;
+}
+
+
+
 //Packet format: ![PacketID]|[DeviceID]|#b|[brief1]|...|[briefN]|#n|[numeric1]|...|[numericN]\n
 //example: !|#p|0|#d|1|#b|Pressure|Manufacturer unknown|#n|-100|+100|\n
 QByteArray Packet::encode()
@@ -82,21 +116,21 @@ bool Packet::decode(QByteArray *data)
     return true;
 }
 
-int Packet::getPacketType()
+int Packet::getPacketType() const
 {
     return packetID;
 }
-int Packet::getDeviceID()
+int Packet::getDeviceID() const
 {
     return deviceID;
 }
 
-QList<QString> *Packet::getBriefData()
+QList<QString> *Packet::getBriefData() const
 {
     return briefData;
 }
 
-QList<double>* Packet::getNumericData()
+QList<double>* Packet::getNumericData() const
 {
     return numericData;
 }

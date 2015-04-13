@@ -2,7 +2,8 @@
 
 ScadaDevice::ScadaDevice()
 {
-
+    name = "noname";
+    factoryData = "nodata";
 }
 
 ScadaDevice::~ScadaDevice()
@@ -20,12 +21,12 @@ Packet ScadaDevice::getDataPacket()
 
 }
 
-void ScadaDevice::initReceived(Packet init)
+void ScadaDevice::initReceived(Packet *init)
 {
 
 }
 
-void ScadaDevice::dataReceived(Packet data)
+void ScadaDevice::dataReceived(Packet *data)
 {
 
 }
