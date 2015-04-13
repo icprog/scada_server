@@ -12,14 +12,15 @@ public:
         SENSOR_INIT,
         SENSOR_DATA,
         REGULATOR_INIT,
-        REGULATOR_DATA
+        REGULATOR_DATA,
+        HMI_INIT
     };
 
     Packet();
     ~Packet();
 
     QByteArray encode();
-    bool decode(QByteArray data);
+    bool decode(QByteArray *data);
 
     int getPacketType();
     int getDeviceID();

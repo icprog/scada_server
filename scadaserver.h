@@ -6,6 +6,7 @@
 #include <QTcpServer>
 #include <QTcpSocket>
 
+#include "deviceinterface.h"
 #include "packet.h"
 #include "sensor.h"
 //#include "regulator.h"
@@ -27,9 +28,12 @@ private slots:
     void onDeviceDataRx();
 
 private:
-    QList<ScadaDevice*>* deviceList;
+    QList<DeviceConnection>* deviceList;
     QTcpServer *server;
-    QList<QTcpSocket*> devicesConnected;
+    QList<QTcpSocket*> *devicesConnected;
+
+
+    ScadaDevice* findDevice(int uuid);
 
 };
 

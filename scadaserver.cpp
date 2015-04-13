@@ -3,7 +3,8 @@
 ScadaServer::ScadaServer(QObject *parent) : QObject(parent)
 {
     server = new QTcpServer(this);
-    deviceList = new QList<ScadaDevice*>;
+    deviceList = new QList<DeviceConnection>;
+    devicesConnected = new QList<QTcpSocket*>;
 //    signalMapper = new QSignalMapper(this);
     connect(this->server, SIGNAL(newConnection()), this, SLOT(onNewDeviceConnected()));
 }
@@ -11,48 +12,61 @@ ScadaServer::ScadaServer(QObject *parent) : QObject(parent)
 ScadaServer::~ScadaServer()
 {
     delete deviceList;
+//    qDeleteAll(devicesConnected);
+    delete devicesConnected;
 }
 
 bool ScadaServer::startServer(int portNumber)
 {
-    return server->listen(portNumber);
+    return server->listen(QHostAddress::Any, portNumber);
 }
 
 
 
 void ScadaServer::onNewDeviceConnected()
 {
+
     QTcpSocket* newDevice = server->nextPendingConnection();
-    devicesConnected.append(newDevice);
+    devicesConnected->append(newDevice);
     connect(newDevice, SIGNAL(readyRead()), this, SLOT(onDeviceDataRx()));
 }
 
+
 void ScadaServer::onDeviceDataRx()
 {
-    QTcpSocket *device = dynamic_cast<QTcpSocket*>(sender());
-    QByteArray rxData = device->readAll();
-    Packet packet;
+    QTcpSocket *socket = dynamic_cast<QTcpSocket*>(sender());
+    QByteArray rxData = socket->readAll();
+   Packet packet;
     QList<Packet> packetList;
-    while(packet.decode(rxData)) //there can be more packets which came together
+    while(packet.decode(&rxData)) //there can be more packets which came together
     {
         packetList.append(packet); //we will separate them and put into list
     }
-    foreach(Packet element, packetList)
+    foreach(Packet element, packetList) //There may be many packets in one stream readout
     {
-        if(element.getPacketType()==Packet::SENSOR_INIT)
+        if(element.getPacketType()==Packet::SENSOR_INIT) //we've got new sensor
         {
-            ScadaDevice* device = new Sensor();
-            deviceList->append(device);
+            ScadaDevice* dev = new Sensor();
+            dev->initReceived(element);
+            deviceList->append(DeviceConnection(dev,socket)); //append new device to connection list
         }
-        if(element.getPacketType()==Packet::REGULATOR_INIT)
-        {
+//        if(element.getPacketType()==Packet::REGULATOR_INIT)
+//        {
 //            ScadaDevice* device = new Requlator();
 //            deviceList->append(device);
-        }
+//        }
         if(element.getPacketType()==Packet::SENSOR_DATA)
         {
-
+            ScadaDevice* dev = findDevice(element.getDeviceID());
+            if(dev!=NULL)
+            {
+                dev->dataReceived(element);
+            }
         }
+//        if(element.getPacketType()==Packet::REGULATOR_DATA)
+//        {
+
+//        }
     }
 
 }
@@ -62,9 +76,10 @@ ScadaDevice* ScadaServer::findDevice(int uuid)
 {
     for(int i = 0; i<deviceList->size(); i++)
     {
-        if(deviceList->at(i)->getUUID() == uuid)
+        DeviceConnection device = deviceList->at(i);
+        if(device.getDevice()->getUUID()==uuid)
         {
-            return deviceList->at(i);
+            return device.getDevice();
         }
     }
     return NULL;

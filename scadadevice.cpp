@@ -33,13 +33,3 @@ void ScadaDevice::dataReceived(Packet data)
 int ScadaDevice::getUUID(){
     return uuid;
 }
-
-QTcpSocket* ScadaDevice::getSocket()
-{
-    return socket;
-}
-
-void ScadaDevice::setSocket(QTcpSocket* socket)
-{
-    this->socket = socket;
-}

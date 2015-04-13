@@ -13,7 +13,7 @@ Packet::~Packet()
     delete numericData;
 }
 //Packet format: ![PacketID]|[DeviceID]|#b|[brief1]|...|[briefN]|#n|[numeric1]|...|[numericN]\n
-//example: !|#p|1|#d|1|#b|Pressure|Manufacturer unknown|#n|-100|+100|\n
+//example: !|#p|0|#d|1|#b|Pressure|Manufacturer unknown|#n|-100|+100|\n
 QByteArray Packet::encode()
 {
     QByteArray encodedData;
@@ -45,15 +45,15 @@ QByteArray Packet::encode()
     return encodedData;
 }
 
-bool Packet::decode(QByteArray data)
+bool Packet::decode(QByteArray *data)
 {
 
 //    QString splitSeparator;
 //    splitSeparator.append(SEPARATOR);
-    QStringList splitData = (QString::fromLocal8Bit(data).split(SEPARATOR));
+    QStringList splitData = (QString::fromLocal8Bit(*data).split(SEPARATOR));
 
     size_t i = 0;
-    while((splitData.at(i)).contains("!") && i<data.size()) //After this loop i points to START_CHAR
+    while((splitData.at(i)).contains("!") && i<data->size()) //After this loop i points to START_CHAR
         i++;
 
     if(splitData.at(i).contains("#p"))
@@ -65,20 +65,20 @@ bool Packet::decode(QByteArray data)
     else return false;
     i++;
     if(splitData.at(i++)=="#b")
-        while(splitData.at(i)!="#n" && i<data.size())
+        while(splitData.at(i)!="#n" && i<data->size())
         {
             this->briefData->append(splitData.at(i));
             i++;
         }
     else return false;
     if(splitData.at(i++)=="#n")
-        while(!splitData.at(i).contains("\n") && i<data.size())
+        while(!splitData.at(i).contains("\n") && i<data->size())
         {
             this->numericData->append(splitData.at(i).toDouble());
             i++;
         }
     else return false;
-
+    data->remove(0,i);
     return true;
 }
 

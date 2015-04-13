@@ -12,3 +12,12 @@ DeviceConnection::~DeviceConnection()
     delete socket;
 }
 
+QTcpSocket* DeviceConnection::getSocket()
+{
+    return socket;
+}
+
+ScadaDevice* DeviceConnection::getDevice()
+{
+    return device;
+}
