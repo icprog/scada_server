@@ -27,7 +27,7 @@ void ScadaServer::onNewDeviceConnected()
 {
 
     QTcpSocket* newDevice = server->nextPendingConnection();
-    devicesConnected->append(newDevice);
+    devicesConnected->append(newDevice);x
     connect(newDevice, SIGNAL(readyRead()), this, SLOT(onDeviceDataRx()));
     connect(newDevice, SIGNAL(disconnected()), this, SLOT(onDeviceDisconnected()));
 }

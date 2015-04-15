@@ -18,7 +18,7 @@ public:
     void initReceived(Packet *init);
 
 private:
-    int deviceID;
+//    int deviceID;
     QString measurandName;
     QString measurandUnit;
     double rangeMin;
