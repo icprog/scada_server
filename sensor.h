@@ -14,8 +14,8 @@ public:
     ~Sensor();
     Packet getDataPacket();
     Packet getInitPacket();
-    void dataReceived(Packet *data);
-    void initReceived(Packet *init);
+    bool dataReceived(Packet *data);
+    bool initReceived(Packet *init);
 
 private:
 //    int deviceID;
@@ -24,6 +24,8 @@ private:
     double rangeMin;
     double rangeMax;
     double samplingPeriod;
+
+protected:
     double currentValue;
 
 };

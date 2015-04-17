@@ -7,8 +7,9 @@
 #include <QTcpSocket>
 
 #include "deviceinterface.h"
+#include "sensorconnection.h"
 #include "packet.h"
-#include "sensor.h"
+//#include "sensor.h"
 //#include "regulator.h"
 
 
@@ -29,7 +30,7 @@ private slots:
     void onDeviceDisconnected();
 
 private:
-    QList<DeviceConnection*>* deviceList;
+    QList<ScadaDevice*>* deviceList;
     QTcpServer *server;
     QList<QTcpSocket*> *devicesConnected;
 

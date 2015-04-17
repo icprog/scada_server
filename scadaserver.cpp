@@ -3,7 +3,7 @@
 ScadaServer::ScadaServer(QObject *parent) : QObject(parent)
 {
     server = new QTcpServer(this);
-    deviceList = new QList<DeviceConnection*>;
+    deviceList = new QList<ScadaDevice*>;
     devicesConnected = new QList<QTcpSocket*>;
 //    signalMapper = new QSignalMapper(this);
     connect(this->server, SIGNAL(newConnection()), this, SLOT(onNewDeviceConnected()));
@@ -27,7 +27,7 @@ void ScadaServer::onNewDeviceConnected()
 {
 
     QTcpSocket* newDevice = server->nextPendingConnection();
-    devicesConnected->append(newDevice);x
+    devicesConnected->append(newDevice);
     connect(newDevice, SIGNAL(readyRead()), this, SLOT(onDeviceDataRx()));
     connect(newDevice, SIGNAL(disconnected()), this, SLOT(onDeviceDisconnected()));
 }
@@ -48,19 +48,27 @@ void ScadaServer::onDeviceDataRx()
     {
         if(packet.getPacketType()==Packet::SENSOR_INIT) //we've got new sensor
         {
-            ScadaDevice* dev = new Sensor();
-            dev->initReceived(&packet);
-            DeviceConnection* deviceConnection = new DeviceConnection(dev, socket);
-            deviceList->append(deviceConnection); //append new device to connection list
+            SensorConnection* sensor = new SensorConnection(socket); //create new SensorConnection, assign him socket
+            if(sensor->initReceived(&packet))  //call method to process received data,
+            {       //if init data correct
+                ScadaDevice* device = sensor;
+                deviceList->append(device); //append new device to connection list
+            }
+            else
+            {
+                socket->disconnectFromHost();
+                delete sensor;
+            }
         }
-//        if(element.getPacketType()==Packet::REGULATOR_INIT)
+//        if(element.getPacketType()==Packet::REGULATOR_INIT)   //TODO
 //        {
 //            ScadaDevice* device = new Requlator();
 //            deviceList->append(device);
 //        }
-        if(packet.getPacketType()==Packet::SENSOR_DATA)
+        if(packet.getPacketType()==Packet::SENSOR_DATA || packet.getPacketType()==Packet::REGULATOR_DATA) //TODO: no need of different enums
         {
-            ScadaDevice* dev = findDevice(packet.getDeviceID());
+              ScadaDevice* dev = findDevice(packet.getDeviceID());
+
             if(dev!=NULL)
             {
                 dev->dataReceived(&packet);
@@ -79,7 +87,7 @@ void ScadaServer::onDeviceDisconnected()
     QTcpSocket *socket = dynamic_cast<QTcpSocket*>(sender());
     for(int i = 0; i<deviceList->size(); i++)
     {
-        DeviceConnection *device = deviceList->at(i);
+        DeviceConnection *device = dynamic_cast<DeviceConnection*>(deviceList->at(i));
         if(device->getSocket() == socket)
         {
             delete deviceList->at(i);
@@ -95,10 +103,12 @@ ScadaDevice* ScadaServer::findDevice(int uuid)
 {
     for(int i = 0; i<deviceList->size(); i++)
     {
-        DeviceConnection* device = deviceList->at(i);
-        if(device->getDevice()->getUUID()==uuid)
+        ScadaDevice *device;
+//        SensorConnection* connection = static_cast<SensorConnection*>(deviceList->at(i));
+//        ScadaDevice* device = dynamic_cast<ScadaDevice*>(deviceList->at(i));
+        if(device->getUUID()==uuid)
         {
-            return device->getDevice();
+            return device;
         }
     }
     return NULL;

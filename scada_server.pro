@@ -20,11 +20,13 @@ SOURCES += main.cpp \
     scadadevice.cpp \
     sensor.cpp \
     scadaserver.cpp \
-    deviceinterface.cpp
+    deviceinterface.cpp \
+    sensorconnection.cpp
 
 HEADERS += \
     packet.h \
     scadadevice.h \
     sensor.h \
     scadaserver.h \
-    deviceinterface.h
+    deviceinterface.h \
+    sensorconnection.h
