@@ -4,6 +4,7 @@ ScadaServer::ScadaServer(QObject *parent) : QObject(parent)
 {
     server = new QTcpServer(this);
     deviceList = new QList<ScadaDevice*>;
+    hmiList = new QList<HMI_Connection*>;
     devicesConnected = new QList<QTcpSocket*>;
 //    signalMapper = new QSignalMapper(this);
     connect(this->server, SIGNAL(newConnection()), this, SLOT(onNewDeviceConnected()));
@@ -13,6 +14,7 @@ ScadaServer::~ScadaServer()
 {
     delete deviceList;
 //    qDeleteAll(devicesConnected);
+    delete hmiList;
     delete devicesConnected;
 }
 
@@ -53,6 +55,10 @@ void ScadaServer::onDeviceDataRx()
             {       //if init data correct
                 ScadaDevice* device = sensor;
                 deviceList->append(device); //append new device to connection list
+                foreach(HMI_Connection* hmi, *hmiList)
+                {
+                    hmi->sendDeviceList(deviceList);  //tell all the HMIs that there's a new buddy
+                }
             }
             else
             {
@@ -65,13 +71,55 @@ void ScadaServer::onDeviceDataRx()
 //            ScadaDevice* device = new Requlator();
 //            deviceList->append(device);
 //        }
-        if(packet.getPacketType()==Packet::SENSOR_DATA || packet.getPacketType()==Packet::REGULATOR_DATA) //TODO: no need of different enums
+        if(packet.getPacketType()==Packet::HMI_INIT)
+        {
+            HMI_Connection* device = new HMI_Connection(socket);
+            if(device->initReceived(&packet))
+            {
+                hmiList->append(device);    //append new HMI to list of HMIs, to easy broadcast them new devices
+                device->sendDeviceList(deviceList);
+                ScadaDevice* hmi = device;
+                deviceList->append(hmi);  //append new HMI to list of all devices (as ScadaDevice)
+            }
+            else
+            {
+                socket->disconnectFromHost();
+                delete device;
+            }
+        }
+//        if(packet.getPacketType()==Packet::HMI_WISHLIST)
+//        {
+//            ScadaDevice* dev = findDevice(packet.getDeviceID());
+//            HMI_Connection* hmi = dynamic_cast<HMI_Connection*>(dev);
+//            hmi->settingsReceived(packet);
+//        }
+        if(packet.getPacketType()==Packet::DATA)
         {
               ScadaDevice* dev = findDevice(packet.getDeviceID());
 
             if(dev!=NULL)
             {
                 dev->dataReceived(&packet);
+            }
+        }
+        if(packet.getPacketType()==Packet::SETTINGS)
+        {
+            ScadaDevice *dev = findDevice(packet.getDeviceID());
+            if(dev)
+            {
+                dev->settingsReceived(&packet);
+                HMI_Connection* hmi = dynamic_cast<HMI_Connection*>(dev); //additionally, check if dev is a HMI
+                if(hmi)  //if so, settings packet contains wishlist
+                {
+                   foreach(int uuid, *(hmi->getWishlist())) //for each device in wishlist
+                   {
+                       ScadaDevice* dev = findDevice(uuid); // find by uuid
+                       if(dev)
+                           hmi->getSocket()->write((dev->getInitPacket()).encode()); //and send init packet to HMI
+
+                   }
+
+                }
             }
         }
 //        if(element.getPacketType()==Packet::REGULATOR_DATA)

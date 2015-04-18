@@ -8,6 +8,7 @@
 
 #include "deviceinterface.h"
 #include "sensorconnection.h"
+#include "hmi_connection.h"
 #include "packet.h"
 //#include "sensor.h"
 //#include "regulator.h"
@@ -31,8 +32,10 @@ private slots:
 
 private:
     QList<ScadaDevice*>* deviceList;
+    QList<HMI_Connection*>* hmiList;
     QTcpServer *server;
     QList<QTcpSocket*> *devicesConnected;
+
 
 
     ScadaDevice* findDevice(int uuid);

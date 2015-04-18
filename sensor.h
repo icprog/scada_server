@@ -16,6 +16,7 @@ public:
     Packet getInitPacket();
     bool dataReceived(Packet *data);
     bool initReceived(Packet *init);
+    bool settingsReceived(Packet *settings);
 
 private:
 //    int deviceID;

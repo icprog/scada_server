@@ -16,10 +16,11 @@ public:
     explicit ScadaDevice();
     ~ScadaDevice();
 
-    virtual Packet getInitPacket();
-    virtual Packet getDataPacket();
-    virtual bool initReceived(Packet* init);
-    virtual bool dataReceived(Packet* data);
+    virtual Packet getInitPacket() = 0;
+    virtual Packet getDataPacket() = 0;
+    virtual bool initReceived(Packet* init) = 0;
+    virtual bool dataReceived(Packet* data) = 0;
+    virtual bool settingsReceived(Packet* settings) = 0;
     int getUUID();
 protected:
     QString name;

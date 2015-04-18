@@ -47,7 +47,7 @@ Packet &Packet::operator= (const Packet &packet)
 
 
 //Packet format: ![PacketID]|[DeviceID]|#b|[brief1]|...|[briefN]|#n|[numeric1]|...|[numericN]\n
-//example: !|#p|0|#d|1|#b|Pressure|Manufacturer unknown|#n|-100|+100|\n
+//example: !|#p|2|#d|1|#b|Name|HMI|factory data|foo|HMI brief|Just another HMI|#n|
 QByteArray Packet::encode()
 {
     QByteArray encodedData;
@@ -99,17 +99,19 @@ bool Packet::decode(QByteArray *data)
     else return false;
     i++;
     if(splitData.at(i++)=="#b")
-        while(splitData.at(i)!="#n" && i<data->size())
+        while( i<splitData.size() && splitData.at(i)!="#n")
         {
             this->briefData->append(splitData.at(i));
             i++;
+            if(i>=splitData.size()) return false;
         }
     else return false;
     if(splitData.at(i++)=="#n")
-        while(!splitData.at(i).contains("\n") && i<data->size())
+        while(!splitData.at(i).contains("\n") && i<splitData.size())
         {
             this->numericData->append(splitData.at(i).toDouble());
             i++;
+            if(i>=splitData.size()) return false;
         }
     else return false;
     data->remove(0,i);

@@ -14,8 +14,10 @@ Sensor::~Sensor()
 Packet Sensor::getDataPacket()
 {
     Packet packet;
-    packet.setPacketID(Packet::SENSOR_DATA);
+    packet.setPacketID(Packet::DATA);
     packet.setDeviceID(this->uuid);
+    packet.addBriefData("dev_state");
+    packet.addNumericData(deviceState);
     packet.addBriefData("meas_value");
     packet.addNumericData(currentValue);
     return packet;
@@ -49,9 +51,10 @@ bool Sensor::dataReceived(Packet *data)
     QList<double>* numeric = data->getNumericData();
     if(!brief->isEmpty() && !numeric->isEmpty())
     {
-        if(brief->at(0)=="meas_value")
+        if(brief->at(0)=="dev_state" && brief->at(1)=="meas_value")
         {
-            currentValue = numeric->at(0);
+            deviceState = (deviceState_enum)numeric->at(0);
+            currentValue = numeric->at(1);
             return true;
         }
     }
@@ -61,6 +64,7 @@ bool Sensor::dataReceived(Packet *data)
 
 bool Sensor::initReceived(Packet *init)
 {
+    this->uuid = init->getDeviceID();
     QList<QString>* brief = init->getBriefData();
     QList<double>* numeric = init->getNumericData();
     if(brief->size() == 11 && numeric->size()==3)
@@ -77,3 +81,14 @@ bool Sensor::initReceived(Packet *init)
     return false;
 
 }
+
+bool Sensor::settingsReceived(Packet *settings)
+{
+    if(settings->getNumericData()->size()==1)
+    {
+        this->deviceState = (deviceState_enum)settings->getNumericData()->at(0);
+        return true;
+    }
+    return false;
+}
+

@@ -21,7 +21,9 @@ SOURCES += main.cpp \
     sensor.cpp \
     scadaserver.cpp \
     deviceinterface.cpp \
-    sensorconnection.cpp
+    sensorconnection.cpp \
+    humanmachineinterface.cpp \
+    hmi_connection.cpp
 
 HEADERS += \
     packet.h \
@@ -29,4 +31,6 @@ HEADERS += \
     sensor.h \
     scadaserver.h \
     deviceinterface.h \
-    sensorconnection.h
+    sensorconnection.h \
+    humanmachineinterface.h \
+    hmi_connection.h

@@ -11,25 +11,7 @@ ScadaDevice::~ScadaDevice()
 
 }
 
-Packet ScadaDevice::getInitPacket()
-{
 
-}
-
-Packet ScadaDevice::getDataPacket()
-{
-
-}
-
-bool ScadaDevice::initReceived(Packet *init)
-{
-
-}
-
-bool ScadaDevice::dataReceived(Packet *data)
-{
-
-}
 
 int ScadaDevice::getUUID(){
     return uuid;

@@ -10,10 +10,11 @@ class Packet
 public:
     enum PacketID_enum{
         SENSOR_INIT,
-        SENSOR_DATA,
         REGULATOR_INIT,
-        REGULATOR_DATA,
-        HMI_INIT
+        HMI_INIT,
+        HMI_WISHLIST,
+        DATA,
+        SETTINGS
     };
 
     Packet();
