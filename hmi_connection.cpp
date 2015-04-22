@@ -15,6 +15,16 @@ QList<int> *HMI_Connection::getWishlist()
     return &wishList;
 }
 
+bool HMI_Connection::isOnWishlist(int uuid)
+{
+    for(size_t i=0; i<wishList.size(); i++)
+    {
+        if(wishList[i]==uuid)
+            return true;
+    }
+    return false;
+}
+
 void HMI_Connection::sendDeviceList(QList<ScadaDevice *> *deviceList)
 {
     foreach(ScadaDevice* device, *deviceList)

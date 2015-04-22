@@ -2,6 +2,8 @@
 
 ScadaServer::ScadaServer(QObject *parent) : QObject(parent)
 {
+    timer = new QTimer(this);
+    connect(this->timer, SIGNAL(timeout()), this, SLOT(onServerInterval()));
     server = new QTcpServer(this);
     deviceList = new QList<ScadaDevice*>;
     hmiList = new QList<HMI_Connection*>;
@@ -100,6 +102,14 @@ void ScadaServer::onDeviceDataRx()
             if(dev!=NULL)
             {
                 dev->dataReceived(&packet);
+                for(size_t i =0; i<hmiList->size(); i++) //for each HMI...
+                {
+                    HMI_Connection* hmi = hmiList->at(i);
+                    if(hmi->isOnWishlist(dev->getUUID())) //Check if data sender is on wishlist...
+                    {
+                        hmi->getSocket()->write(hmi->getDataPacket().encode()); //If so, forward its data to HMI
+                    }
+                }
             }
         }
         if(packet.getPacketType()==Packet::SETTINGS)
@@ -151,7 +161,7 @@ ScadaDevice* ScadaServer::findDevice(int uuid)
 {
     for(int i = 0; i<deviceList->size(); i++)
     {
-        ScadaDevice *device;
+        ScadaDevice *device = deviceList->at(i);
 //        SensorConnection* connection = static_cast<SensorConnection*>(deviceList->at(i));
 //        ScadaDevice* device = dynamic_cast<ScadaDevice*>(deviceList->at(i));
         if(device->getUUID()==uuid)
@@ -160,4 +170,9 @@ ScadaDevice* ScadaServer::findDevice(int uuid)
         }
     }
     return NULL;
+}
+
+void ScadaServer::onServerInterval()
+{
+
 }

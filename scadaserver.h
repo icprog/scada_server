@@ -5,6 +5,7 @@
 #include <QSignalMapper>
 #include <QTcpServer>
 #include <QTcpSocket>
+#include <QTimer>
 
 #include "deviceinterface.h"
 #include "sensorconnection.h"
@@ -29,13 +30,14 @@ private slots:
     void onNewDeviceConnected();
     void onDeviceDataRx();
     void onDeviceDisconnected();
-
+    void onServerInterval();
 private:
     QList<ScadaDevice*>* deviceList;
     QList<HMI_Connection*>* hmiList;
     QTcpServer *server;
     QList<QTcpSocket*> *devicesConnected;
 
+    QTimer* timer;
 
 
     ScadaDevice* findDevice(int uuid);

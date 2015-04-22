@@ -14,6 +14,7 @@ public:
     ~HMI_Connection();
 
     QList<int>* getWishlist();
+    bool isOnWishlist(int uuid);
     void sendDeviceList(QList<ScadaDevice*>* deviceList);
 };
 
