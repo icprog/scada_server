@@ -16,21 +16,21 @@ TEMPLATE = app
 
 
 SOURCES += main.cpp \
-    packet.cpp \
-    scadadevice.cpp \
-    sensor.cpp \
     scadaserver.cpp \
     deviceinterface.cpp \
     sensorconnection.cpp \
-    humanmachineinterface.cpp \
-    hmi_connection.cpp
+    hmi_connection.cpp \
+    common/humanmachineinterface.cpp \
+    common/packet.cpp \
+    common/scadadevice.cpp \
+    common/sensor.cpp
 
 HEADERS += \
-    packet.h \
-    scadadevice.h \
-    sensor.h \
     scadaserver.h \
     deviceinterface.h \
     sensorconnection.h \
-    humanmachineinterface.h \
-    hmi_connection.h
+    hmi_connection.h \
+    common/humanmachineinterface.h \
+    common/packet.h \
+    common/scadadevice.h \
+    common/sensor.h

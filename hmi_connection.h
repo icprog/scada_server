@@ -2,8 +2,8 @@
 #define HMI_CONNECTION_H
 #include <QTcpSocket>
 #include <QList>
-#include "scadadevice.h"
-#include "humanmachineinterface.h"
+#include "common/scadadevice.h"
+#include "common/humanmachineinterface.h"
 #include "deviceinterface.h"
 
 

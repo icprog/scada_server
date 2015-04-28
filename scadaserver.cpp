@@ -118,18 +118,19 @@ void ScadaServer::onDeviceDataRx()
             if(dev)
             {
                 dev->settingsReceived(&packet);
-                HMI_Connection* hmi = dynamic_cast<HMI_Connection*>(dev); //additionally, check if dev is a HMI
-                if(hmi)  //if so, settings packet contains wishlist
-                {
-                   foreach(int uuid, *(hmi->getWishlist())) //for each device in wishlist
-                   {
-                       ScadaDevice* dev = findDevice(uuid); // find by uuid
-                       if(dev)
-                           hmi->getSocket()->write((dev->getInitPacket()).encode()); //and send init packet to HMI
+                //A PO CHOLERĘ?
+//                HMI_Connection* hmi = dynamic_cast<HMI_Connection*>(dev); //additionally, check if dev is a HMI
+//                if(hmi)  //if so, settings packet contains wishlist
+//                {
+//                   foreach(int uuid, *(hmi->getWishlist())) //for each device in wishlist
+//                   {
+//                       ScadaDevice* dev = findDevice(uuid); // find by uuid
+//                       if(dev)
+//                           hmi->getSocket()->write((dev->getInitPacket()).encode()); //and send init packet to HMI
 
-                   }
+//                   }
 
-                }
+//                }
             }
         }
 //        if(element.getPacketType()==Packet::REGULATOR_DATA)

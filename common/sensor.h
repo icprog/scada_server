@@ -18,15 +18,13 @@ public:
     bool initReceived(Packet *init);
     bool settingsReceived(Packet *settings);
 
-private:
+protected:
 //    int deviceID;
     QString measurandName;
     QString measurandUnit;
     double rangeMin;
     double rangeMax;
     double samplingPeriod;
-
-protected:
     double currentValue;
 
 };

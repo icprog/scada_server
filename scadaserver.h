@@ -10,7 +10,7 @@
 #include "deviceinterface.h"
 #include "sensorconnection.h"
 #include "hmi_connection.h"
-#include "packet.h"
+#include "common/packet.h"
 //#include "sensor.h"
 //#include "regulator.h"
 

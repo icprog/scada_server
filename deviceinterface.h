@@ -1,7 +1,7 @@
 #ifndef DEVICEINTERFACE_H
 #define DEVICEINTERFACE_H
 #include <QTcpSocket>
-#include "scadadevice.h"
+#include "common/scadadevice.h"
 class DeviceConnection
 {
 public:

@@ -15,6 +15,8 @@ public:
     bool dataReceived(Packet *data);
     bool settingsReceived(Packet *settings);
 
+    bool appendToWishlist(ScadaDevice* device);
+
 private:
     QString hmiBrief;
 

@@ -74,3 +74,14 @@ Packet HumanMachineInterface::getSettingsPacket()
     return packet;
 }
 
+
+bool HumanMachineInterface::appendToWishlist(ScadaDevice* device)
+{
+    for(size_t i; i<wishList.size();i++)
+    {
+        if(wishList[i]==device->getUUID())
+            return false;
+    }
+    wishList.append(device->getUUID());
+    return true;
+}

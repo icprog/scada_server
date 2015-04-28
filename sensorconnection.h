@@ -1,7 +1,7 @@
 #ifndef SENSORCONNECTION_H
 #define SENSORCONNECTION_H
 
-#include "sensor.h"
+#include "common/sensor.h"
 #include "deviceinterface.h"
 
 class SensorConnection : public Sensor, public DeviceConnection
