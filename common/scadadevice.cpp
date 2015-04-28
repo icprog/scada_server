@@ -4,6 +4,7 @@ ScadaDevice::ScadaDevice()
 {
     name = "noname";
     factoryData = "nodata";
+    deviceState = STATE_ON;
 }
 
 ScadaDevice::~ScadaDevice()
