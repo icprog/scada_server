@@ -18,9 +18,10 @@ public:
 
     virtual Packet getInitPacket() = 0;
     virtual Packet getDataPacket() = 0;
+    Packet getSettingsPacket();
     virtual bool initReceived(Packet* init) = 0;
     virtual bool dataReceived(Packet* data) = 0;
-    virtual bool settingsReceived(Packet* settings) = 0;
+    bool settingsReceived(Packet* settings);
     int getUUID();
 protected:
     QString name;

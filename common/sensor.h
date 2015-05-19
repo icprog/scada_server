@@ -14,9 +14,9 @@ public:
     ~Sensor();
     Packet getDataPacket();
     Packet getInitPacket();
+
     bool dataReceived(Packet *data);
     bool initReceived(Packet *init);
-    bool settingsReceived(Packet *settings);
 
 protected:
 //    int deviceID;

@@ -37,6 +37,7 @@ Packet Sensor::getInitPacket()
     return packet;
 }
 
+
 bool Sensor::dataReceived(Packet *data)
 {
     QList<QString>* brief = data->getBriefData();
@@ -71,13 +72,4 @@ bool Sensor::initReceived(Packet *init)
 
 }
 
-bool Sensor::settingsReceived(Packet *settings)
-{
-    if(settings->getNumericData()->size()==1)
-    {
-        this->deviceState = (deviceState_enum)settings->getNumericData()->at(0);
-        return true;
-    }
-    return false;
-}
 

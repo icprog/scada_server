@@ -11,6 +11,7 @@
 #include "sensorconnection.h"
 #include "hmi_connection.h"
 #include "common/packet.h"
+#include <QDebug>
 //#include "sensor.h"
 //#include "regulator.h"
 
@@ -30,7 +31,7 @@ private slots:
     void onNewDeviceConnected();
     void onDeviceDataRx();
     void onDeviceDisconnected();
-    void onServerInterval();
+
 private:
     QList<ScadaDevice*>* deviceList;
     QList<HMI_Connection*>* hmiList;
