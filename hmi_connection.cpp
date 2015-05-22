@@ -17,6 +17,7 @@ QList<int> *HMI_Connection::getWishlist()
 
 bool HMI_Connection::isOnWishlist(int uuid)
 {
+
     for(size_t i=0; i<wishList.size(); i++)
     {
         if(wishList[i]==uuid)

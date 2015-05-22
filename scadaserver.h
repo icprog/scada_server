@@ -31,6 +31,8 @@ private slots:
     void onNewDeviceConnected();
     void onDeviceDataRx();
     void onDeviceDisconnected();
+    void onServerError(QAbstractSocket::SocketError error);
+    void onSocketError(QAbstractSocket::SocketError error);
 
 private:
     QList<ScadaDevice*>* deviceList;

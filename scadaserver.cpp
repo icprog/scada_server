@@ -10,6 +10,7 @@ ScadaServer::ScadaServer(QObject *parent) : QObject(parent)
     devicesConnected = new QList<QTcpSocket*>;
 //    signalMapper = new QSignalMapper(this);
     connect(this->server, SIGNAL(newConnection()), this, SLOT(onNewDeviceConnected()));
+    connect(this->server, SIGNAL(acceptError(QAbstractSocket::SocketError)), this, SLOT(onServerError(QAbstractSocket::SocketError)));
 }
 
 ScadaServer::~ScadaServer()
@@ -22,7 +23,7 @@ ScadaServer::~ScadaServer()
 
 bool ScadaServer::startServer(int portNumber)
 {
-    qDebug() << "Starting server...";
+    qDebug() << "Server started.";
     return server->listen(QHostAddress::Any, portNumber);
 }
 
@@ -36,6 +37,9 @@ void ScadaServer::onNewDeviceConnected()
     devicesConnected->append(newDevice);
     connect(newDevice, SIGNAL(readyRead()), this, SLOT(onDeviceDataRx()));
     connect(newDevice, SIGNAL(disconnected()), this, SLOT(onDeviceDisconnected()));
+    connect(newDevice, SIGNAL(error(QAbstractSocket::SocketError)),this,SLOT(onSocketError(QAbstractSocket::SocketError)));
+
+
 }
 
 
@@ -155,13 +159,39 @@ void ScadaServer::onDeviceDisconnected()
         DeviceConnection *device = dynamic_cast<DeviceConnection*>(deviceList->at(i));
         if(device->getSocket() == socket)
         {
+            for(int j=0; j<hmiList->size(); j++)
+            {
+                HMI_Connection* hmi = static_cast<HMI_Connection*>(device);
+                if(hmi->getSocket()==socket)
+                {
+//                    delete hmiList->at(i);
+                    hmiList->removeAt(j);
+                    break;
+                }
+            }
             delete deviceList->at(i);
             deviceList->removeAt(i);
             return;
         }
     }
+    for(size_t i =0; i<hmiList->size(); i++) //for each HMI...
+    {
+        HMI_Connection* hmi = hmiList->at(i);
+        hmi->sendDeviceList(deviceList);
+    }
+}
 
-//    ??
+
+void ScadaServer::onServerError(QAbstractSocket::SocketError error)
+{
+    qDebug() << "An error occured: " + QString::number(error)<<endl;
+    qDebug() << server->errorString();
+}
+
+void ScadaServer::onSocketError(QAbstractSocket::SocketError error)
+{
+    QTcpSocket *socket = dynamic_cast<QTcpSocket*>(sender());
+    qDebug() << socket->errorString();
 }
 
 ScadaDevice* ScadaServer::findDevice(int uuid)
@@ -169,8 +199,6 @@ ScadaDevice* ScadaServer::findDevice(int uuid)
     for(int i = 0; i<deviceList->size(); i++)
     {
         ScadaDevice *device = deviceList->at(i);
-//        SensorConnection* connection = static_cast<SensorConnection*>(deviceList->at(i));
-//        ScadaDevice* device = dynamic_cast<ScadaDevice*>(deviceList->at(i));
         if(device->getUUID()==uuid)
         {
             return device;
